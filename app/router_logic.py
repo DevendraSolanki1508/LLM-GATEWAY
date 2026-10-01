@@ -9,8 +9,8 @@ from app.providers.gemini_provider import GeminiProvider
 from app.providers.ollama_provider import OllamaProvider
 
 # Instantiate providers once (reused across requests)
-groq_fast = GroqProvider(model="llama-3.1-8b-instant")
-gemini_strong = GeminiProvider(model="gemini-2.5-flash")
+groq_fast = GroqProvider(model="openai/gpt-oss-20b")
+gemini_strong = GeminiProvider(model="gemini-3.8-flash")
 ollama_local = OllamaProvider(model="llama3.2:3b")
 
 # Routing table: complexity -> ordered provider preference.

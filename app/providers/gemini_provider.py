@@ -17,7 +17,7 @@ GEMINI_URL_TEMPLATE = (
 class GeminiProvider(BaseProvider):
     name = "gemini"
 
-    def __init__(self, model: str = "gemini-2.5-flash"):
+    def __init__(self, model: str = "gemini-3.8-flash"):
         self.api_key = os.environ.get("GEMINI_API_KEY")
         self.model = model
 
