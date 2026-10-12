@@ -97,3 +97,7 @@ llm-gateway/
 - [ ] Locust load testing
 - [ ] Docker + docker-compose
 - [ ] Deploy to a public URL
+
+
+
+![Grafana dashboard](docs/dashboard.png)
