@@ -1,39 +1,20 @@
-"""
-Groq provider - uses Groq's free, extremely fast inference API.
-Get a free API key at https://console.groq.com/keys
-"""
-
-import os
-import time
-import httpx
-
+import os, time, httpx
 from app.providers.base import BaseProvider, ProviderError
 
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-
 class GroqProvider(BaseProvider):
     name = "groq"
-
-    def __init__(self, model: str = "llama-3.1-8b-instant"):
+    def __init__(self, model: str = "openai/gpt-oss-20b"):
         self.api_key = os.environ.get("GROQ_API_KEY")
         self.model = model
 
     async def generate(self, prompt: str, timeout: float = 10.0) -> dict:
         if not self.api_key:
             raise ProviderError("GROQ_API_KEY not set")
-
         start = time.perf_counter()
-
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
-        }
-        payload = {
-            "model": self.model,
-            "messages": [{"role": "user", "content": prompt}],
-        }
-
+        headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
+        payload = {"model": self.model, "messages": [{"role": "user", "content": prompt}]}
         try:
             async with httpx.AsyncClient(timeout=timeout) as client:
                 resp = await client.post(GROQ_URL, headers=headers, json=payload)
@@ -45,12 +26,6 @@ class GroqProvider(BaseProvider):
             raise ProviderError(f"{self.name} returned {e.response.status_code}: {e.response.text}")
         except Exception as e:
             raise ProviderError(f"{self.name} failed: {str(e)}")
-
         latency_ms = (time.perf_counter() - start) * 1000
         text = data["choices"][0]["message"]["content"]
-
-        return {
-            "text": text,
-            "provider": self.name,
-            "latency_ms": round(latency_ms, 2),
-        }
+        return {"text": text, "provider": self.name, "latency_ms": round(latency_ms, 2)}

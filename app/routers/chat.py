@@ -7,6 +7,7 @@ from app.router_logic import route_request
 from app.providers.base import ProviderError
 from app.cache.exact_cache import get_cached, set_cached
 from app.cache.semantic_cache import get_semantic_cached, set_semantic_cached
+from app.metrics import record_request
 
 router = APIRouter()
 
@@ -38,6 +39,7 @@ async def chat(request: ChatRequest):
         cached["total_latency_ms"] = total_latency_ms
         cached["cache_hit"] = True
         cached["cache_type"] = "exact"
+        record_request(cached["provider"], "exact", cached["fallback_used"], total_latency_ms)
         return ChatResponse(**cached)
 
     # 2. Semantic cache - catches reworded duplicates (embedding similarity search)
@@ -47,6 +49,7 @@ async def chat(request: ChatRequest):
         semantic_hit["total_latency_ms"] = total_latency_ms
         semantic_hit["cache_hit"] = True
         semantic_hit["cache_type"] = "semantic"
+        record_request(semantic_hit["provider"], "semantic", semantic_hit["fallback_used"], total_latency_ms)
         return ChatResponse(**semantic_hit)
 
     # 3. Cache miss on both - classify and route to a real provider
@@ -70,6 +73,8 @@ async def chat(request: ChatRequest):
         cache_hit=False,
         cache_type="none",
     )
+
+    record_request(response.provider, "none", response.fallback_used, total_latency_ms)
 
     # 4. Store in both caches for next time (fire and forget - best effort)
     response_dict = response.model_dump()
