@@ -1,0 +1,6 @@
+duration_seconds_bucket{handler="/metrics",le="0.5",method="GET"} 2.0
+http_request_duration_seconds_bucket{handler="/metrics",le="1.0",method="GET"} 2.0
+http_request_duration_seconds_bucket{handler="/metrics",le="+Inf",method="GET"} 2.0
+http_request_duration_seconds_count{handler="/metrics",method="GET"} 2.0
+http_request_duration_seconds_sum{handler="/metrics",method="GET"} 0.024085500044748187
+# 

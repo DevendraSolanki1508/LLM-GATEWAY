@@ -5,11 +5,11 @@ GEMINI_URL_TEMPLATE = "https://generativelanguage.googleapis.com/v1beta/models/{
 
 class GeminiProvider(BaseProvider):
     name = "gemini"
-    def __init__(self, model: str = "gemini-3.8-flash"):
+    def __init__(self, model: str = "gemini-3.1-flash-lite"):
         self.api_key = os.environ.get("GEMINI_API_KEY")
         self.model = model
 
-    async def generate(self, prompt: str, timeout: float = 30.0) -> dict:
+    async def generate(self, prompt: str, timeout: float = 12.0) -> dict:
         if not self.api_key:
             raise ProviderError("GEMINI_API_KEY not set")
         start = time.perf_counter()
